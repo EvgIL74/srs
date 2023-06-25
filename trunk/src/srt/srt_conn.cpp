@@ -77,6 +77,7 @@ bool get_streamid_info(const std::string& streamid, int& mode, std::string& vhos
 {
     mode = PULL_SRT_MODE;
 
+    // PlaySight start update
    size_t pospublish = streamid.find("m=publish");
    size_t posrequest = streamid.find("m=request");
    size_t pos = streamid.find("#!::");
@@ -85,7 +86,10 @@ bool get_streamid_info(const std::string& streamid, int& mode, std::string& vhos
     {
         streamid.insert(0,"#!::h=");
         streamid.append(",m=publish");
+        srt_log_warn("Update SRT stream to suitable publish format:%s", streamid.c_str());
     }
+     // PlaySight finish update
+    
     if (pos != 0) {
         pos = streamid.find("/");
         if (pos == streamid.npos) {
