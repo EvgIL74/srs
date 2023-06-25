@@ -76,25 +76,19 @@ bool get_key_value(const std::string& info, std::string& key, std::string& value
 bool get_streamid_info(const std::string& streamid, int& mode, std::string& vhost, std::string& url_subpath)
 {
     mode = PULL_SRT_MODE;
-
-    // PlaySight start update
-   size_t pospublish = streamid.find("m=publish");
-   size_t posrequest = streamid.find("m=request");
-   size_t pos = streamid.find("#!::");
-
-    if (!(pospublish !=0 && pos != 0) && !(posrequest != 0 && pos != 0))
-    {
-        streamid = std::string("#!::h=") + streamid + std::string(",m=publish");
-        srt_log_warn("Update SRT stream to suitable publish format:%s", streamid.c_str());
-    }
-     // PlaySight finish update
+    
+    size_t pos = streamid.find("#!::");
     
     if (pos != 0) {
         pos = streamid.find("/");
         if (pos == streamid.npos) {
             url_subpath = _srs_config->get_default_app_name() + "/" + streamid;
+             srt_log_warn("Update SRT stream to suitable publish format:%s", streamid.c_str());
+            mode = PUSH_SRT_MODE;
             return true;
         }
+         srt_log_warn("Update SRT stream to suitable publish format:%s", streamid.c_str());
+        mode = PUSH_SRT_MODE;
         url_subpath = streamid;
         return true;
     }
@@ -166,6 +160,18 @@ bool get_streamid_info(const std::string& streamid, int& mode, std::string& vhos
         }
     }
 
+    // PlaySight start update
+   size_t pospublish = streamid.find("publish");
+   size_t posrequest = streamid.find("request");
+   size_t posspec = streamid.find("#!::");
+    
+    if (!((pospublish != std::string::npos) && (posspec != std::string::npos)) && !((posrequest != std::string::npos) && (posspec != std::string::npos)))
+    {
+        mode = PUSH_SRT_MODE;
+        srt_log_warn("Update SRT stream to suitable publish format:%s", streamid.c_str());
+    }
+
+    
     if (url_subpath.empty()) {
         return false;
     }
