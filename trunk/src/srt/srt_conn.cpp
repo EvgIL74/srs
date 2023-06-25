@@ -77,7 +77,15 @@ bool get_streamid_info(const std::string& streamid, int& mode, std::string& vhos
 {
     mode = PULL_SRT_MODE;
 
-    size_t pos = streamid.find("#!::");
+   size_t pospublish = streamid.find("m=publish");
+   size_t posrequest = streamid.find("m=request");
+   size_t pos = streamid.find("#!::");
+
+    if (!(pospublish !=0 && pos != 0) && !(posrequest != 0 && pos != 0))
+    {
+        streamid.insert(0,"#!::h=");
+        streamid.append(",m=publish");
+    }
     if (pos != 0) {
         pos = streamid.find("/");
         if (pos == streamid.npos) {
