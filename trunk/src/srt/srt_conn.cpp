@@ -84,8 +84,7 @@ bool get_streamid_info(const std::string& streamid, int& mode, std::string& vhos
 
     if (!(pospublish !=0 && pos != 0) && !(posrequest != 0 && pos != 0))
     {
-        streamid.insert(0,"#!::h=");
-        streamid.append(",m=publish");
+        streamid = std::string("#!::h=") + streamid + ",m=publish";
         srt_log_warn("Update SRT stream to suitable publish format:%s", streamid.c_str());
     }
      // PlaySight finish update
